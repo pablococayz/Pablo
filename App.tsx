@@ -1,7 +1,4 @@
 
-
-
-
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { DINNER_TYPES, EATER_PROFILES } from './constants';
 import { DinnerType, Recipe, WeeklyPlan, ShoppingListItem, Diner, EaterProfileId, DinnerTypeId, RecipeIngredient } from './types';
@@ -234,7 +231,8 @@ const App: React.FC = () => {
         <Header 
           onShowSaved={() => { setScreen('saved'); setEditingRecipe(null); }} 
           onShowMain={resetToModeSelection}
-          onInstall={installPrompt ? handleInstallClick : undefined}
+          installPrompt={installPrompt}
+          onInstallClick={handleInstallClick}
         />
         {screen === 'main' && renderMainContent()}
         {screen === 'saved' && !editingRecipe && <SavedRecipesScreen recipes={userRecipes} onRate={handleRateRecipe} onBackToMain={() => setScreen('main')} onEdit={setEditingRecipe} onCreate={() => setEditingRecipe('new')} onDeleteRequest={setRecipeToDelete}/>}
@@ -252,7 +250,12 @@ const App: React.FC = () => {
   );
 };
 
-const Header: React.FC<{ onShowSaved: () => void, onShowMain: () => void, onInstall?: () => void }> = ({ onShowSaved, onShowMain, onInstall }) => (
+const Header: React.FC<{ 
+  onShowSaved: () => void; 
+  onShowMain: () => void; 
+  installPrompt: any;
+  onInstallClick: () => void;
+}> = ({ onShowSaved, onShowMain, installPrompt, onInstallClick }) => (
   <header className="text-center mb-10 relative">
     <h1 onClick={onShowMain} className="text-4xl sm:text-5xl font-bold text-gray-800 tracking-tight cursor-pointer">
       Generador de Cenas con <span className="text-indigo-600">IA</span>
@@ -261,16 +264,15 @@ const Header: React.FC<{ onShowSaved: () => void, onShowMain: () => void, onInst
       ¿Sin ideas para cenar? Elige tu objetivo, dinos quiénes sois y deja que la IA cree la magia.
     </p>
     <div className="absolute top-0 right-0 flex items-center gap-4">
-        {onInstall && (
-            <button 
-              onClick={onInstall} 
-              className="flex items-center gap-2 px-4 py-2 bg-emerald-500 text-white font-semibold rounded-lg shadow-sm hover:bg-emerald-600 transition-colors"
-              title="Instalar aplicación"
-            >
-                <DownloadIcon className="w-5 h-5" />
-                <span>Instalar App</span>
-            </button>
-        )}
+        <button 
+          onClick={onInstallClick}
+          disabled={!installPrompt}
+          className="flex items-center gap-2 px-4 py-2 bg-emerald-500 text-white font-semibold rounded-lg shadow-sm hover:bg-emerald-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+          title={!installPrompt ? "La instalación no está disponible en este navegador o entorno" : "Instalar aplicación"}
+        >
+            <DownloadIcon className="w-5 h-5" />
+            <span>Instalar App</span>
+        </button>
         <button onClick={onShowSaved} className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-indigo-500 text-indigo-600 font-semibold rounded-lg shadow-sm hover:bg-indigo-50 transition-colors">
             <BookmarkIcon className="w-5 h-5" />
             Mis Recetas
@@ -821,7 +823,7 @@ const ConfirmationModal: React.FC<{
 
 
 const Spinner: React.FC = () => (
-    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+    <svg className="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
     </svg>
@@ -845,5 +847,4 @@ style.innerHTML = `
 `;
 document.head.appendChild(style);
 
-// FIX: Removed invalid Spanish text from the end of the file that was causing syntax errors.
 export default App;
