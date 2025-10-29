@@ -139,7 +139,7 @@ export const generateRecipe = async (dinnerType: DinnerType, diners: Diner[]): P
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-pro",
+      model: "gemini-2.5-flash",
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -202,7 +202,7 @@ export const generateWeeklyPlan = async (dinnerTypes: DinnerType[], diners: Dine
 
     try {
         const response = await ai.models.generateContent({
-          model: "gemini-2.5-pro",
+          model: "gemini-2.5-flash",
           contents: prompt,
           config: {
             responseMimeType: "application/json",

@@ -264,15 +264,16 @@ const Header: React.FC<{
       ¿Sin ideas para cenar? Elige tu objetivo, dinos quiénes sois y deja que la IA cree la magia.
     </p>
     <div className="absolute top-0 right-0 flex items-center gap-4">
-        <button 
-          onClick={onInstallClick}
-          disabled={!installPrompt}
-          className="flex items-center gap-2 px-4 py-2 bg-emerald-500 text-white font-semibold rounded-lg shadow-sm hover:bg-emerald-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
-          title={!installPrompt ? "La instalación no está disponible en este navegador o entorno" : "Instalar aplicación"}
-        >
-            <DownloadIcon className="w-5 h-5" />
-            <span>Instalar App</span>
-        </button>
+        {installPrompt && (
+            <button 
+              onClick={onInstallClick}
+              className="flex items-center gap-2 px-4 py-2 bg-emerald-500 text-white font-semibold rounded-lg shadow-sm hover:bg-emerald-600 transition-colors"
+              title="Instalar aplicación"
+            >
+                <DownloadIcon className="w-5 h-5" />
+                <span>Instalar App</span>
+            </button>
+        )}
         <button onClick={onShowSaved} className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-indigo-500 text-indigo-600 font-semibold rounded-lg shadow-sm hover:bg-indigo-50 transition-colors">
             <BookmarkIcon className="w-5 h-5" />
             Mis Recetas
@@ -406,32 +407,42 @@ const DinerSelectionScreen: React.FC<{ mode: Mode; diners: Diner[]; setDiners: R
 };
 
 const StarRating: React.FC<{ rating: number; onRate: (rating: number) => void; }> = ({ rating, onRate }) => {
-  const [hoverRating, setHoverRating] = useState(0);
-  const stars = [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5];
-  return (
-    <div className="flex items-center space-x-0.5">
-      {stars.map((starValue, i) => (
-          i % 2 === 0 && (
-            <div
-                key={starValue}
-                className="relative cursor-pointer"
-                onMouseEnter={() => setHoverRating(starValue)}
-                onMouseLeave={() => setHoverRating(0)}
-            >
-                <StarIcon className="w-8 h-8 text-gray-300" />
+    const [hoverRating, setHoverRating] = useState(0);
+    const stars = [1, 2, 3, 4, 5];
+  
+    return (
+        <div className="flex items-center space-x-0.5" onMouseLeave={() => setHoverRating(0)}>
+            {stars.map((starValue) => (
                 <div
-                    className="absolute top-0 left-0 h-full overflow-hidden"
-                    style={{ width: `${ (hoverRating || rating) >= starValue ? '100%' : (hoverRating || rating) > starValue - 0.5 ? '50%' : '0%' }`}}
+                    key={starValue}
+                    className="relative cursor-pointer"
+                    aria-label={`Valorar con ${starValue} estrellas`}
                 >
-                    <StarIcon className="w-8 h-8 text-amber-400" />
+                    <StarIcon className="w-8 h-8 text-gray-300" />
+                    <div
+                        className="absolute top-0 left-0 h-full overflow-hidden"
+                        style={{ width: `${(hoverRating || rating) >= starValue ? '100%' : (hoverRating || rating) > starValue - 0.5 ? '50%' : '0%'}` }}
+                    >
+                        <StarIcon className="w-8 h-8 text-amber-400" />
+                    </div>
+                    <div 
+                        className="absolute top-0 left-0 w-1/2 h-full" 
+                        onMouseEnter={() => setHoverRating(starValue - 0.5)}
+                        onClick={() => onRate(starValue - 0.5)}
+                        role="button"
+                        aria-label={`Valorar con ${starValue - 0.5} estrellas`}
+                    />
+                    <div 
+                        className="absolute top-0 right-0 w-1/2 h-full" 
+                        onMouseEnter={() => setHoverRating(starValue)}
+                        onClick={() => onRate(starValue)}
+                        role="button"
+                        aria-label={`Valorar con ${starValue} estrellas`}
+                    />
                 </div>
-                <div className="absolute top-0 left-0 w-1/2 h-full" onClick={() => onRate(starValue - 0.5)}></div>
-                <div className="absolute top-0 right-0 w-1/2 h-full" onClick={() => onRate(starValue)}></div>
-            </div>
-          )
-      ))}
-    </div>
-  );
+            ))}
+        </div>
+    );
 };
 
 
