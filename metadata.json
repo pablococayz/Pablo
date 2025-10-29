@@ -1,0 +1,5 @@
+{
+  "name": "Generador de Cenas con IA",
+  "description": "Una aplicación web que utiliza la IA de Gemini para generar ideas de cenas deliciosas, rápidas y económicas basadas en tus objetivos nutricionales.",
+  "requestFramePermissions": []
+}
